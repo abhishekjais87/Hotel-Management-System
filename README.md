@@ -1,65 +1,88 @@
-# Hotel Management System (Java Console Application)
+# 🏨 Hotel Management System (Java GUI Application)
 
-A simple **Hotel Management System** implemented in Java using object-oriented programming concepts. This console-based application manages room bookings and customer details for a hotel offering three types of rooms.
+A fully functional **Hotel Management System** developed using **Java Swing** that allows for interactive room booking and customer data management via a user-friendly graphical interface. This project demonstrates key Object-Oriented Programming principles and Java GUI components.
 
-## Features
+---
 
-- Room types: Standard, Deluxe, Suite
-- Room booking with availability check
-- Store and display customer information
-- Calculate stay duration and total charges
-- Console-based UI for easy navigation
+## 📌 Key Features
 
-## Functionalities
+✅ **Java Swing GUI**  
+✅ **Room Booking (Standard / Deluxe / Suite)**  
+✅ **Customer Registration & Management**  
+✅ **Real-Time Room Availability Tracking**  
+✅ **Charge Calculation Based on Stay Duration**  
+✅ **Scalable for future extensions**
 
-- **Room Management**: 
-  - Create and manage rooms with availability status and price
-  - Display room details
+---
 
-- **Booking System**:
-  - Book available rooms based on type
-  - Assign customers to rooms
-  - Track the number of days stayed
+## 🎯 Functional Overview
 
-- **Customer Management**:
-  - Register customer details (name, contact, room, days stayed)
-  - Display all customers and their room details
+### 🛏️ Room Management
+- Pre-defined room types: Standard, Deluxe, Suite
+- Set pricing per room type
+- Check real-time availability
+- Prevents double-booking
 
-## Technologies Used
+### 👤 Customer Management
+- Input and store customer details:
+  - Full Name
+  - Contact Number
+  - Room Type Booked
+  - Number of Days
+- View all customer bookings in a clean, organized format
 
-- Java (JDK 8+)
-- Java Collections
-- Object-Oriented Programming
+### 🧾 Booking System
+- Interactive form for booking rooms
+- Automatic charge calculation based on room type and stay
+- Clear error messages for invalid inputs
 
-## How to Run
+---
 
-1. Compile the Java file:
+## 💻 Technologies Used
+
+- **Java**
+- **Java Swing (JFrame, JPanel, JLabel, JTextField, JTable, JButton, etc.)**
+- **Object-Oriented Programming (OOP)**
+- No external libraries or frameworks needed
+
+---
+
+## 🚀 Getting Started
+
+### 🔧 Requirements
+- Java JDK 8 or higher
+- Any IDE (e.g., IntelliJ IDEA, Eclipse) or terminal
+
+### 🛠️ Setup Instructions
+
+1. **Compile the Program**
 
 ```bash
-javac HotelManagementSystem.java
+javac HotelManagementSystemGUI.java
 ```
 
-2. Run the program:
+2. **Run the Program**
 
 ```bash
-java HotelManagementSystem
+java HotelManagementSystemGUI
 ```
 
-## File Included
+3. **Use the GUI**
+- Book rooms by filling out the form
+- View room availability and customer list
+- Exit using the GUI buttons
 
-- `HotelManagementSystem.java`: Contains all logic for managing rooms, bookings, and customers.
+---
 
-## Output Sample
+## 📂 Project Structure
 
-```text
-Welcome to the Hotel Management System!
-1. Book Room
-2. Show All Rooms
-3. Show All Customers
-4. Exit
-Enter your choice:
+```
+📁 HotelManagementSystem/
+├── HotelManagementSystemGUI.java
+└── README.md
 ```
 
-## License
+## 📃 License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the **MIT License** – feel free to use, modify, and share!
+
