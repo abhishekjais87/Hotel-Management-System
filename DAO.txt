@@ -1,0 +1,52 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RoomDAO {
+
+    public List<Room> getAvailableRooms() {
+        List<Room> availableRooms = new ArrayList<>();
+        String sql = "SELECT * FROM Room WHERE is_booked = false";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int number = rs.getInt("room_number");
+                String type = rs.getString("room_type");
+                double price = rs.getDouble("price");
+
+                Room room = switch (type) {
+                    case "Standard" -> new StandardRoom(number);
+                    case "Deluxe" -> new DeluxeRoom(number);
+                    case "Suite" -> new SuiteRoom(number);
+                    default -> null;
+                };
+
+                if (room != null) {
+                    room.isBooked = rs.getBoolean("is_booked");
+                    availableRooms.add(room);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return availableRooms;
+    }
+
+    public void markRoomAsBooked(int roomNumber, boolean booked) {
+        String sql = "UPDATE Room SET is_booked = ? WHERE room_number = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setBoolean(1, booked);
+            stmt.setInt(2, roomNumber);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}

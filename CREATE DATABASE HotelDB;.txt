@@ -1,0 +1,37 @@
+CREATE DATABASE HotelDB;
+
+USE HotelDB;
+
+-- Table for rooms
+CREATE TABLE Room (
+    room_number INT PRIMARY KEY,
+    room_type VARCHAR(20),
+    price DOUBLE,
+    is_booked BOOLEAN DEFAULT FALSE
+);
+
+-- Table for customers
+CREATE TABLE Customer (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    contact VARCHAR(20)
+);
+
+-- Table for bookings
+CREATE TABLE Booking (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    room_number INT,
+    customer_id INT,
+    days_stayed INT,
+    FOREIGN KEY (room_number) REFERENCES Room(room_number),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+);
+
+-- Table for food service (room service)
+CREATE TABLE FoodOrder (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT,
+    item_name VARCHAR(50),
+    item_price DOUBLE,
+    FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
+);
