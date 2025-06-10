@@ -1,0 +1,132 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+public class HotelManagementSystemGUI extends JFrame {
+    private JTextField txtName, txtContact, txtDays, txtCheckinDate;
+    private JComboBox<String> cmbRoomType;
+    private JTextArea txtBookings;
+    private BookingDAO bookingDAO = new BookingDAO();
+
+    public HotelManagementSystemGUI() {
+        setTitle("Hotel Management System");
+        setSize(600, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        initComponents();
+    }
+
+    private void initComponents() {
+        JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
+
+        panel.add(new JLabel("Full Name:"));
+        txtName = new JTextField();
+        panel.add(txtName);
+
+        panel.add(new JLabel("Contact Number:"));
+        txtContact = new JTextField();
+        panel.add(txtContact);
+
+        panel.add(new JLabel("Room Type:"));
+        cmbRoomType = new JComboBox<>(new String[]{"Standard", "Deluxe", "Suite"});
+        panel.add(cmbRoomType);
+
+        panel.add(new JLabel("Number of Days:"));
+        txtDays = new JTextField();
+        panel.add(txtDays);
+
+        panel.add(new JLabel("Check-in Date (yyyy-mm-dd):"));
+        txtCheckinDate = new JTextField(new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
+        panel.add(txtCheckinDate);
+
+        JButton btnBook = new JButton("Book Room");
+        panel.add(btnBook);
+
+        JButton btnViewBookings = new JButton("View Bookings");
+        panel.add(btnViewBookings);
+
+        add(panel, BorderLayout.NORTH);
+
+        txtBookings = new JTextArea();
+        txtBookings.setEditable(false);
+        add(new JScrollPane(txtBookings), BorderLayout.CENTER);
+
+        btnBook.addActionListener(e -> bookRoom());
+        btnViewBookings.addActionListener(e -> loadBookings());
+    }
+
+    private void bookRoom() {
+        String name = txtName.getText().trim();
+        String contact = txtContact.getText().trim();
+        String roomType = (String) cmbRoomType.getSelectedItem();
+        String daysStr = txtDays.getText().trim();
+        String checkinStr = txtCheckinDate.getText().trim();
+
+        // Validate inputs
+        if (name.isEmpty() || contact.isEmpty() || daysStr.isEmpty() || checkinStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!contact.matches("\\d{10}")) {
+            JOptionPane.showMessageDialog(this, "Contact number must be 10 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int days;
+        try {
+            days = Integer.parseInt(daysStr);
+            if (days <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Days must be a positive integer.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Date checkinDate;
+        try {
+            java.util.Date parsedDate = new SimpleDateFormat("yyyy-MM-dd").parse(checkinStr);
+            checkinDate = new Date(parsedDate.getTime());
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid date format. Use yyyy-MM-dd.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Check room availability
+        if (!bookingDAO.isRoomAvailable(roomType)) {
+            JOptionPane.showMessageDialog(this, "Selected room type is fully booked.", "Booking Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Add booking
+        boolean success = bookingDAO.addBooking(name, contact, roomType, days, checkinDate);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Booking successful!");
+            clearInputs();
+            loadBookings();
+        } else {
+            JOptionPane.showMessageDialog(this, "Booking failed due to a system error.", "Booking Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadBookings() {
+        java.util.List<String> bookings = bookingDAO.getAllBookings();
+        txtBookings.setText("");
+        for (String booking : bookings) {
+            txtBookings.append(booking + "\n");
+        }
+    }
+
+    private void clearInputs() {
+        txtName.setText("");
+        txtContact.setText("");
+        txtDays.setText("");
+        txtCheckinDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
+        cmbRoomType.setSelectedIndex(0);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new HotelManagementSystemGUI().setVisible(true);
+        });
+    }
+}

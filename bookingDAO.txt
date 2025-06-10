@@ -1,0 +1,77 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookingDAO {
+
+    public boolean isRoomAvailable(String roomType) {
+        String query = "SELECT COUNT(*) FROM bookings WHERE room_type = ? AND checkout_date >= CURDATE()";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, roomType);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                // Assuming total rooms per type, e.g. Standard=10
+                int totalRooms = getTotalRooms(roomType);
+                return count < totalRooms;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private int getTotalRooms(String roomType) {
+        switch (roomType) {
+            case "Standard": return 10;
+            case "Deluxe": return 5;
+            case "Suite": return 2;
+            default: return 0;
+        }
+    }
+
+    public boolean addBooking(String name, String contact, String roomType, int days, Date checkinDate) {
+        String insertQuery = "INSERT INTO bookings (name, contact, room_type, days, checkin_date, checkout_date) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(insertQuery)) {
+            ps.setString(1, name);
+            ps.setString(2, contact);
+            ps.setString(3, roomType);
+            ps.setInt(4, days);
+            ps.setDate(5, checkinDate);
+            // Calculate checkout date
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(checkinDate);
+            cal.add(java.util.Calendar.DATE, days);
+            ps.setDate(6, new java.sql.Date(cal.getTimeInMillis()));
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<String> getAllBookings() {
+        List<String> bookings = new ArrayList<>();
+        String query = "SELECT * FROM bookings ORDER BY checkin_date DESC";
+        try (Connection con = DBConnection.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                String record = String.format("Name: %s, Contact: %s, Room: %s, Days: %d, Check-in: %s",
+                        rs.getString("name"),
+                        rs.getString("contact"),
+                        rs.getString("room_type"),
+                        rs.getInt("days"),
+                        rs.getDate("checkin_date").toString());
+                bookings.add(record);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookings;
+    }
+}
