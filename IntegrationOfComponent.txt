@@ -1,0 +1,4 @@
+if (!bookingDAO.isRoomAvailable(roomType)) {
+    JOptionPane.showMessageDialog(this, "No rooms available.", "Booking Error", JOptionPane.ERROR_MESSAGE);
+    return;
+}

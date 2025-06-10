@@ -1,0 +1,4 @@
+if (!contact.matches("\\d{10}")) {
+    JOptionPane.showMessageDialog(this, "Contact number must be exactly 10 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
+    return;
+}

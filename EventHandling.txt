@@ -1,0 +1,2 @@
+btnBook.addActionListener(e -> bookRoom());
+btnViewBookings.addActionListener(e -> loadBookings());
